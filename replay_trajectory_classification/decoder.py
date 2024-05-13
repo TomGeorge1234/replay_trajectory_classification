@@ -518,11 +518,9 @@ class SortedSpikesDecoder(_DecoderBase):
 
         logger.info("Estimating likelihood...")
         results = {}
-        results["likelihood"] = scaled_likelihood(
-            _SORTED_SPIKES_ALGORITHMS[self.sorted_spikes_algorithm][1](
-                spikes, np.asarray(self.place_fields_)
-            )
-        )
+        likelihood = _SORTED_SPIKES_ALGORITHMS[self.sorted_spikes_algorithm][1](spikes, np.asarray(self.place_fields_))
+        results["likelihood"] = scaled_likelihood(likelihood)
+        results["unscaled_log_likelihood"] = likelihood
         return self._get_results(results, n_time, time, is_compute_acausal, use_gpu)
 
 
