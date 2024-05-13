@@ -63,7 +63,7 @@ class Environment:
     edge_spacing: tuple = None
     is_track_interior: np.ndarray = None
     position_range: np.ndarray = None
-    infer_track_interior: bool = True
+    infer_track_interior: bool = False
     fill_holes: bool = False
     dilate: bool = False
     bin_count_threshold: int = 0
