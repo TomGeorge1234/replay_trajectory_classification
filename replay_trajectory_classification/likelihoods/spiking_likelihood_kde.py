@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from scipy.special import xlogy
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
 from replay_trajectory_classification.core import atleast_2d
 from replay_trajectory_classification.likelihoods.diffusion import (
@@ -114,7 +114,7 @@ def get_firing_rate(
             position_std,
             block_size=block_size,
         )
-        return np.exp(np.log(mean_rate) + np.log(marginal_density) - np.log(occupancy))
+        return np.exp(np.log(mean_rate) + np.log(marginal_density+1e-8) - np.log(occupancy))
     else:
         return np.zeros_like(occupancy)
 
@@ -268,9 +268,17 @@ def poisson_log_likelihood(
     poisson_log_likelihood : array_like, shape (n_time, n_place_bins)
 
     """
+    # return (
+    #     xlogy(spikes[:, np.newaxis], conditional_intensity[np.newaxis, :])
+    #     - conditional_intensity[np.newaxis, :]
+    # )
+    # return (
+    #     xlogy(spikes[:, np.newaxis], conditional_intensity[np.newaxis, :])
+    #     - ((1-spikes)[:, np.newaxis] * conditional_intensity[np.newaxis, :])
+    # )    
     return (
         xlogy(spikes[:, np.newaxis], conditional_intensity[np.newaxis, :])
-        - conditional_intensity[np.newaxis, :]
+        + xlogy((1-spikes)[:, np.newaxis], (1-conditional_intensity)[np.newaxis, :])
     )
 
 
